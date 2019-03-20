@@ -125,13 +125,13 @@ PyObject* DisplayDeviceInformation(IEnumMoniker *pEnum)
 }
 
 static PyObject *
-getDeviceList(PyObject *self, PyObject *args)
+getDeviceList(PyObject *self)
 {
-	PyObject* pyList = NULL; 
+	PyObject* pyList = PyList_New(0); 
 	
-	HRESULT hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
-	if (SUCCEEDED(hr))
-	{
+	 HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
+	 if (SUCCEEDED(hr))
+	 {
 		IEnumMoniker *pEnum;
 
 		hr = EnumerateDevices(CLSID_VideoInputDeviceCategory, &pEnum);
@@ -141,14 +141,14 @@ getDeviceList(PyObject *self, PyObject *args)
 			pEnum->Release();
 		}
 		CoUninitialize();
-	}
-
+	 }
+	
     return pyList;
 }
 
 static PyMethodDef Methods[] =
 {
-    {"getDeviceList", getDeviceList, METH_VARARGS, NULL},
+    {"getDeviceList", (PyCFunction)getDeviceList, METH_NOARGS, NULL},
     {NULL, NULL, 0, NULL}
 };
 
